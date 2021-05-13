@@ -1,0 +1,23 @@
+<h1 [style.color]="redColor"
+    [style.backgroundColor]="myBackgroundColor"
+    (mouseover)="textMouseOver()"
+    (mouseout)="textMouseOut()"
+    > hello {{title}}</h1>
+<!-- {{...}} là StringInterpolation -->
+<h1 [ngStyle]="{color:redColor, backgroundColor:myBackgroundColor}" > cách 2-1 dùng ngStyle: hello {{title}}</h1>
+
+<h1 [ngStyle]="styleObject" > cách 2-2: hello {{title}}</h1><!-- cách này thì redcolor thay đổi, ui ko đổi -->
+
+<!--==========================  -->
+<!-- <p [class.some-css-class]="some-condition"></p> -->
+<p [class.textDecor]="haveTextDecoration">hello world</p>
+<!-- <p [ngClass]="{some-css-class:some-condition , some-css-class:some-condition,... }">cách 2 dùng ngClass</p> -->
+<p [ngClass]="{textDecor:haveTextDecoration}">cách 2 dùng ngClass</p>
+<!--===========================  -->
+<!-- <li  ([event_name])="[function]"></li>  - cách xử lý xử kiện, tên sự kiện trong cặp ngoặc ()-->
+<div [ngClass]="{haveBorder:myBorder}">xin chao</div>
+<button (click)="toggleBorder($event)">{{myBorder?'hide':'show'}} border</button>
+<!-- ============= -->
+<app-hello [myText]="title" (buttonClicked)="btnClickedByChile($event)"></app-hello>
+<!--  -->
+<app-hi></app-hi>
