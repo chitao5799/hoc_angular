@@ -23,3 +23,10 @@ export class AppComponent implements OnInit{
   }
 
 }
+
+/**
+ * thêm vào trong angular.json
+ * "scripts": [
+              "node_modules/eva-icons/eva.min.js"
+            ]
+ */
