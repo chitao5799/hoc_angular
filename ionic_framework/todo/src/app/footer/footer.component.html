@@ -1,0 +1,9 @@
+<div class="contain_buttons">
+  <ion-button *ngFor="let item of buttons"
+  color="{{item.color}}"
+  disabled="{{item.disableStatus}}"
+  (click)="btnclick(item.type)"
+  >
+    {{item.label}}
+  </ion-button>
+</div>

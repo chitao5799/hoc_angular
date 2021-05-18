@@ -1,0 +1,16 @@
+table, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  border-left: none;
+}
+table{
+  width: 100%;
+  margin-top: 5px;
+}
+table, td:last-child {
+  border-right: none;
+}
+td:first-child {
+  text-align: right;
+  width: 65px;
+}

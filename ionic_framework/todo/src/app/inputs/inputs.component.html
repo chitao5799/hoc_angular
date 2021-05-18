@@ -1,0 +1,18 @@
+<div class="item">
+  <label for="content">Nội dung:</label>
+  <input type="text" id="content" [(ngModel)]="inputContent" placeholder="input your to do..."  required >
+</div>
+<div class="item trang_thai">
+  <label for="" >Trạng thái:</label>
+  <select [(ngModel)]="status" required>
+    <option *ngFor="let item of filters" [value]="item.type">{{item.label}}</option>
+  </select>
+</div>
+<div class="rular"></div>
+<div class="item">
+  <label for="" class="display">Display:</label>
+  <select name="display" #itemSelected (change)="chooseDisplay(itemSelected.value)">
+    <option *ngFor="let itemFilter of filters" [value]="itemFilter.type">{{itemFilter.label}}</option>
+  </select>
+</div>
+

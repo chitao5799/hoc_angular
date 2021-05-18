@@ -1,0 +1,6 @@
+<table>
+  <tr *ngFor="let todo of todosList| async; let indexOfTodo=index; ">
+    <td>{{indexOfTodo+1}}</td>
+    <td>{{todo.content}}</td>
+  </tr>
+</table>

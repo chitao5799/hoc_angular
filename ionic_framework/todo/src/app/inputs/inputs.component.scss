@@ -1,0 +1,24 @@
+label{
+  width: 85px;
+  display: inline-block;
+}
+label.display{
+  width: 65px;
+}
+input[type="text"]{
+  outline-color: rgb(79, 160, 160);
+  width: 200px;
+}
+select{
+  width: 200px;
+  padding-left: 10px;
+  outline-color: rgb(136, 211, 165);
+}
+.rular{
+  border-top: 1px solid #424242;
+  width: 80%;
+  margin: 18px auto;
+}
+.item.trang_thai{
+  margin-top: 10px;
+}
