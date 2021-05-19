@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import {ButtonType} from './models/buttons.model';
-import { Todo } from './models/todo.model';
 import {TodoService} from './services/todo.service';
 @Component({
   selector: 'app-root',
@@ -9,8 +7,6 @@ import {TodoService} from './services/todo.service';
 })
 export class AppComponent {
   date_title:string ;
-  actionFormBtn:number;
-  itemTodoClicked: Todo;
 
   constructor(private todoService: TodoService) {}
 
@@ -23,14 +19,6 @@ export class AppComponent {
 
     //get list todo saved.
     this.todoService.loadTodoListSaved();
-  }
-
-  onBtnClick(action: number){
-    this.actionFormBtn=action;
-  }
-
-  itemTodoClick(itemTodo: Todo){
-    this.itemTodoClicked=itemTodo;
   }
 
 }

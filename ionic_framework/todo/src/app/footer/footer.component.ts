@@ -1,7 +1,5 @@
-import { Component, OnInit, Output,EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ButtonModel, ButtonType } from '../models/buttons.model';
-import {Todo} from '../models/todo.model';
-import { Observable } from 'rxjs';
 import {TodoService} from '../services/todo.service';
 
 
@@ -17,11 +15,11 @@ export class FooterComponent implements OnInit {
     {disableStatus: true, label: "Delete", color: "danger", type: ButtonType.Delete},
     {disableStatus: false, label: "Cancel", color: "medium", type: ButtonType.Cacel}
   ]
-  @Output() addTodo: EventEmitter<number> = new EventEmitter<number>();
 
   constructor(private todoService: TodoService) { }
 
   ngOnInit() {
+    // khi 1 item todo trên màn hình được click sẽ là trạng thái edit: update hoặc delete
     this.todoService.isActionEditTodoItem$.subscribe(isEdit => {
       if(!isEdit){
         this.buttons[0].disableStatus = false; //ensable button add
@@ -37,12 +35,25 @@ export class FooterComponent implements OnInit {
     });
   }
 
-  btnclick(type: number){//this.buttons[1].disableStatus=false; temp
+  btnclick(type: number){
     /**
-     * ý tưởng: khi click 1 button thì gửi loại button được click cho component cha (app-compnent)
-     * component cha sẽ gửi loại button được click cho compnent inputs
+     * ý tưởng: khi click 1 button thì
+     * gửi loại button được click cho component cha (app-compnent) thông qua @Output() [@Output() của footer component ]
+     * component cha sẽ gửi loại button được click cho compnent inputs thông qua @Input() [@Input() của inputs compnent]
      * component inputs gọi service thực hiện xử lý tương ứng.
+     * ==> đã làm ở commit trước đó.
+     * ------------
+     * ko dùng cách trên dùng service và Observable và BehaviorSubject để truyền data giữa các component
      */
-      this.addTodo.emit(type);
+    this.todoService.buttonClicked(type);
+
+    //khi button cancel clicked
+    if(type == ButtonType.Cacel)
+    {
+      this.buttons[0].disableStatus = false; //ensable button add
+      this.buttons[1].disableStatus = true;// disable button update
+      this.buttons[2].disableStatus = true; // disable button delete
+    }
+
   }
 }

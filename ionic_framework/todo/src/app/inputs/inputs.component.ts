@@ -1,11 +1,9 @@
-import { Component ,ChangeDetectorRef, OnInit,Input, SimpleChanges,Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FilterStatus, Filter } from '../models/filtering.model';
 import {TodoService} from '../services/todo.service';
 import {ButtonType} from '../models/buttons.model';
-import { AngularDelegate } from '@ionic/angular';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController } from '@ionic/angular';
 import { Todo } from '../models/todo.model';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-inputs',
@@ -15,7 +13,7 @@ import { Observable } from 'rxjs';
 export class InputsComponent implements OnInit {
   inputContent:string;
   status: string=Filter.NotStart.toString();
-  itemTodoClicked: Observable<Todo>;
+  idItemTodoClickedOnScreen: number;
 
   filters: FilterStatus[]=[
     {type:Filter.NotStart, label: 'Not Start'},
@@ -23,76 +21,110 @@ export class InputsComponent implements OnInit {
     {type:Filter.Completed, label: 'Completed'}
   ];
 
-  @Input() actionHandle?:number;
-  @Input() itemTodoWillEdit?:Todo;
-  @Output() changeAction: EventEmitter<number> = new EventEmitter<number>();
-
   constructor(private todoService: TodoService,
-    private cdr: ChangeDetectorRef,
-    public toastController: ToastController)
+      public toastController: ToastController,
+      public alertController: AlertController)
   { }
 
   ngOnInit() {
-    this.todoService.todoItemClicked$.subscribe(todoItem=>{
-      if(todoItem.content == ''){
-        return;
-      }
-      this.inputContent = todoItem.content;
-      this.status = todoItem.status.toString() ;
+    //khi 1 item todo trên màn hình được click
+    this.todoService.todoItemClicked$.subscribe(todoItem => {
+      this.handleItemTodoClickedOnScreen(todoItem);
+    });
+    //khi 1 button được click
+    this.todoService.typeButtonClicked$.subscribe(typeButtonClicked => {
+      this.handleButtonClicked(typeButtonClicked);
     });
   }
 
+  private handleItemTodoClickedOnScreen(todoItem: Todo){
+    if(todoItem.content == ''){
+      return;
+    }
+    this.inputContent = todoItem.content;
+    this.status = todoItem.status.toString() ;
+    this.idItemTodoClickedOnScreen = todoItem.id;
+  }
+
+  private handleButtonClicked(typeButtonClicked: ButtonType){
+    if(typeButtonClicked == -1)
+    {
+        return;
+    }
+    if((this.inputContent === '' || this.inputContent == null) && typeButtonClicked!==ButtonType.Cacel && typeButtonClicked!==ButtonType.Delete){
+      this.presentToast();
+      return;
+    }
+
+    switch(typeButtonClicked){
+      case ButtonType.Add:{
+        this.todoService.addToDo(this.inputContent,Number.parseInt(this.status));
+        this.setItemInputDefault();
+        };
+        break;
+      case ButtonType.Update:
+        this.presentAlertConfirm(ButtonType.Update,'cập nhật');
+        break;
+      case ButtonType.Delete:
+        this.presentAlertConfirm(ButtonType.Delete,'xóa');
+        break;
+      case ButtonType.Cacel: this.setItemInputDefault(); break;
+    }
+
+  }
 
   chooseDisplay(value: string){
     this.todoService.filterTodos(Number.parseInt(value));
   }
 
-  async presentToast() {
+  private setItemInputDefault(){
+    //set giá trị mặc định cho các item input
+    this.inputContent = '';
+    this.status = Filter.NotStart.toString();
+  }
+
+  private async presentAlertConfirm(typeButton: ButtonType, content: string) {
+    const alert = await this.alertController.create({
+      cssClass: 'my_alert',
+      header: 'Xác nhận!',
+      message: 'Bạn có chắc chắn muốn <strong>'+content+'</strong> item todo này không?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'btn_cancel_alert',
+          handler: () => {
+          }
+        }, {
+          text: 'Okay',
+          cssClass: 'btn_cancel_ok',
+          handler: () => {
+            if(typeButton == ButtonType.Update){
+              this.todoService.updateTodo(this.idItemTodoClickedOnScreen, this.inputContent, Number.parseInt(this.status));
+            }
+            else if(typeButton == ButtonType.Delete){
+              this.todoService.deleteTodo(this.idItemTodoClickedOnScreen);
+            }
+            this.setItemInputDefault();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async presentToast() {
     const toast = await this.toastController.create({
       message: 'Bạn phải nhập vào phần Nội dung',
       duration: 1500,
-      position: 'top'
+      position: 'top',
+      cssClass: 'toast',
+      color: "light"
     });
 
     await toast.present();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    // if( this.itemTodoWillEdit.content  !=='')
-    // {
-    //   this.inputContent = this.itemTodoWillEdit.content;
-    //   this.status =this.itemTodoWillEdit.status.toString() ;
-    // }
-    // else
-    // {
-      if(this.actionHandle==-1){
-      this.cdr.detectChanges();
-      return;
-      }
-      if( this.inputContent === '' && changes.actionHandle.currentValue !== ButtonType.Cacel){
-        this.changeAction.emit(-1);
-        this.presentToast();
-        this.cdr.detectChanges();
-        return;
-      }
-      if(changes.actionHandle.currentValue === ButtonType.Add){
-        this.todoService.addToDo(this.inputContent,Number.parseInt(this.status) );
-      }
-      this.changeActionToDefault();
-    // }
-
-  }
-
-  changeActionToDefault(){
-    this.inputContent = '';
-    this.status=Filter.NotStart.toString();
-    this.changeAction.emit(-1);
-    /*mục đích để thay đổi actionHandle = -1
-      vì hàm ngOnChanges chỉ chạy khi @Input() thay đổi giá trị.
-      nếu ko thay đổi actionHandle thì khi ấn button add
-      thì actionHandle=ButtonType.Add và ấn lần nữa thì actionHandle vẫn = ButtonType.Add và ko chạy hàm ngOnChanges
-      */
-     this.cdr.detectChanges();
-  }
-
+  ngOnChanges() {  }
 }
