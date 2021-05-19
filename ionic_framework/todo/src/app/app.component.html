@@ -9,9 +9,11 @@
    <div id="wrapper">
      <h2>TODO List: {{date_title}}</h2>
      <div class="inputs">
-       <app-inputs [actionHandle]="actionFormBtn" (changeAction)="onBtnClick($event)"></app-inputs>
+       <app-inputs [actionHandle]="actionFormBtn" (changeAction)="onBtnClick($event)">
+        <!--  [itemTodoWillEdit]="itemTodoClicked" -->
+      </app-inputs>
      </div>
-     <app-todo-list></app-todo-list>
+     <app-todo-list (editTodo)="itemTodoClick($event)"></app-todo-list>
      <app-footer (addTodo)="onBtnClick($event)"></app-footer>
    </div>
   </ion-content>

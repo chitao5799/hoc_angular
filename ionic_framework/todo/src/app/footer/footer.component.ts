@@ -1,6 +1,10 @@
 import { Component, OnInit, Output,EventEmitter } from '@angular/core';
 import { ButtonModel, ButtonType } from '../models/buttons.model';
 import {Todo} from '../models/todo.model';
+import { Observable } from 'rxjs';
+import {TodoService} from '../services/todo.service';
+
+
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
@@ -15,9 +19,24 @@ export class FooterComponent implements OnInit {
   ]
   @Output() addTodo: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor() { }
+  constructor(private todoService: TodoService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.todoService.isActionEditTodoItem$.subscribe(isEdit => {
+      if(!isEdit){
+        this.buttons[0].disableStatus = false; //ensable button add
+        this.buttons[1].disableStatus = true;// disable button update
+        this.buttons[2].disableStatus = true; // disable button delete
+      }
+      else{
+        this.buttons[0].disableStatus = true; //disable button add
+        this.buttons[1].disableStatus = false;// enable button update
+        this.buttons[2].disableStatus = false; // enable button delete
+      }
+
+    });
+  }
+
   btnclick(type: number){//this.buttons[1].disableStatus=false; temp
     /**
      * ý tưởng: khi click 1 button thì gửi loại button được click cho component cha (app-compnent)

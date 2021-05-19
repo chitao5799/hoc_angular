@@ -15,4 +15,7 @@
     <option *ngFor="let itemFilter of filters" [value]="itemFilter.type">{{itemFilter.label}}</option>
   </select>
 </div>
+<input [(ngModel)]="actionHandle" type="hidden">
+<!-- để tag hidden ở đây mục đích để sửa lỗi
+nếu ko có nó khi ko nhập content gì mà ấn add liên tục, rồi nhập content và ấn add thì lúc này sẽ ko add được -->
 

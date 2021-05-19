@@ -14,3 +14,9 @@ td:first-child {
   text-align: right;
   width: 65px;
 }
+td:last-child {
+  padding-left: 5px;
+}
+tr:hover{
+  background-color: #cae86b;
+}

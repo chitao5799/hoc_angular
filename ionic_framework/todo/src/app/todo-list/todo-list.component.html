@@ -1,5 +1,5 @@
 <table>
-  <tr *ngFor="let todo of todosList| async; let indexOfTodo=index; ">
+  <tr *ngFor="let todo of todosList| async; let indexOfTodo=index; " (click)="itemTodoClick(todo)">
     <td>{{indexOfTodo+1}}</td>
     <td>{{todo.content}}</td>
   </tr>
